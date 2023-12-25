@@ -52,12 +52,6 @@ public class User implements UserDetails
         fetch = FetchType.LAZY,
         mappedBy = "user"
     )
-    private List<EnvironmentalData> environmentalDataList;
-
-    @OneToMany(
-        fetch = FetchType.LAZY,
-        mappedBy = "user"
-    )
     private List<CommunityReport> communityReports;
 
     @OneToMany(
@@ -65,38 +59,6 @@ public class User implements UserDetails
         mappedBy = "user"
     )
     private List<SustainabilityScore> sustainabilityScores;
-
-    public void addUserProfile(UserProfile userProfile)
-    {
-        if(userProfiles == null)
-            userProfiles = new ArrayList<>();
-
-        userProfiles.add(userProfile);
-    }
-
-    public void addEnvironmentalData(EnvironmentalData environmentalData)
-    {
-        if(environmentalDataList == null)
-            environmentalDataList = new ArrayList<>();
-
-        environmentalDataList.add(environmentalData);
-    }
-
-    public void addCommunityReport(CommunityReport communityReport)
-    {
-        if(communityReports == null)
-            communityReports = new ArrayList<>();
-
-        communityReports.add(communityReport);
-    }
-
-    public void addSustainabilityScore(SustainabilityScore sustainabilityScore)
-    {
-        if(sustainabilityScores == null)
-            sustainabilityScores = new ArrayList<>();
-
-        sustainabilityScores.add(sustainabilityScore);
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities()

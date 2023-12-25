@@ -10,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.validation.BindingResult;
 
-import jakarta.validation.ValidationException;
 import org.springframework.security.authentication.DisabledException;
 
 import com.eco.track.eco_tracking_system.entity.User;
@@ -27,7 +26,8 @@ import com.eco.track.eco_tracking_system.response.GenericResponse;
 import com.eco.track.eco_tracking_system.util.Helper;
 import com.eco.track.eco_tracking_system.config.security.JwtService;
 
-import com.eco.track.eco_tracking_system.exception.ExceptionType.UserNotFoundException;
+import com.eco.track.eco_tracking_system.exception.ExceptionType.NotFoundException;
+import com.eco.track.eco_tracking_system.exception.ExceptionType.ValidationException;
 
 @Service
 @RequiredArgsConstructor
@@ -77,15 +77,15 @@ public class AuthenticationService
         BindingResult result
     ) throws
         ValidationException,
-        UserNotFoundException
+        NotFoundException
     {
         Helper.fieldsValidate(result);
 
         var user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new UserNotFoundException("user not found"));
+                .orElseThrow(() -> new NotFoundException("user not found"));
 
         if(!passwordEncoder.matches(request.getPassword(), user.getPassword()))
-            throw new UserNotFoundException("user not found");
+            throw new NotFoundException("user not found");
 
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
@@ -104,13 +104,15 @@ public class AuthenticationService
             .build();
     }
 
-    public TokenResponse refreshToken(String refreshToken)
+    public TokenResponse refreshToken(
+        String refreshToken
+    ) throws NotFoundException
     {
-        String email = jwtService.extractUsername(refreshToken);
+        String username = jwtService.extractUsername(refreshToken);
 
         var user = userRepository
-            .findByEmail(email)
-            .orElseThrow(() -> new UserNotFoundException("user not found"));
+            .findByUsername(username)
+            .orElseThrow(() -> new NotFoundException("user not found"));
 
         if(!user.getIsEnabled())
             throw new DisabledException("user is disabled");

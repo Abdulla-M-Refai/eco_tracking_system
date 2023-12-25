@@ -4,7 +4,7 @@ import lombok.*;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "EducationalResource")
+@Table(name = "educational_resources")
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,7 +16,7 @@ public class EducationalResource
     @Column(name = "resource_id")
     private Long resourceId;
 
-    @Column(name = "title", nullable = false, length = 255)
+    @Column(name = "title", nullable = false)
     private String title;
 
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")

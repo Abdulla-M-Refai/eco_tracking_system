@@ -29,7 +29,6 @@ public class SecurityConfiguration
             .disable()
             .authorizeRequests(authorizeRequests -> authorizeRequests
                 .requestMatchers("/api/auth/**", "/api/researchers/**").permitAll()
-                .requestMatchers("/api/user/**").hasAuthority("USER")
                 .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
             )

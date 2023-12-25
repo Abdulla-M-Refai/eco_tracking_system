@@ -20,7 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.modelmapper.ModelMapper;
 
 import com.eco.track.eco_tracking_system.repository.UserRepository;
-import com.eco.track.eco_tracking_system.exception.ExceptionType.UserNotFoundException;
+
+import com.eco.track.eco_tracking_system.exception.ExceptionType.NotFoundException;
 
 @Configuration
 @EnableScheduling
@@ -33,7 +34,7 @@ public class ApplicationConfig
     public UserDetailsService userDetailsService()
     {
         return username -> userRepository.findByUsername(username)
-            .orElseThrow(() -> new UserNotFoundException("user not found"));
+            .orElseThrow(() -> new NotFoundException("user not found"));
     }
 
     @Bean

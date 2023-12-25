@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import com.eco.track.eco_tracking_system.entity.Enum.DataSource;
 
 @Entity
-@Table(name = "EnvironmentalData")
+@Table(name = "environmental_data")
 @Data
 @Builder
 @NoArgsConstructor
@@ -21,8 +21,8 @@ public class EnvironmentalData
     private Long dataId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "profile_id", nullable = false)
+    private UserProfile userProfile;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "data_source", nullable = false)
