@@ -46,7 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
     {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
-        final String userEmail;
+        final String username;
 
         if(authHeader == null || !authHeader.startsWith("Bearer "))
         {
@@ -58,7 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
 
         try
         {
-            userEmail = jwtService.extractUsername(jwt);
+            username = jwtService.extractUsername(jwt);
         }
         catch(ExpiredJwtException e)
         {
@@ -71,9 +71,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
             return;
         }
 
-        if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null)
+        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null)
         {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
             if(jwtService.isTokenValid(jwt,userDetails))
             {

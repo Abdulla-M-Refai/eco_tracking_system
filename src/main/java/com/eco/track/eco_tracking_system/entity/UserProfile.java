@@ -3,8 +3,10 @@ package com.eco.track.eco_tracking_system.entity;
 import lombok.*;
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
-@Table(name = "UserProfile")
+@Table(name = "user_profile")
 @Data
 @Builder
 @NoArgsConstructor
@@ -21,9 +23,16 @@ public class UserProfile
     private User user;
 
     @Column(name = "full_name", nullable = false)
-    private String fullname;
+    private String fullName;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "interest_id", nullable = false)
     private Topic topic;
+
+    @OneToMany(
+        fetch = FetchType.LAZY,
+        mappedBy = "userProfile",
+        cascade = CascadeType.ALL
+    )
+    private List<EnvironmentalData> environmentalDataList;
 }

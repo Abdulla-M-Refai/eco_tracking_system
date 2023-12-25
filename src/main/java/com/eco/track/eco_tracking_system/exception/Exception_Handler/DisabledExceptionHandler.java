@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.core.Ordered;
 
 import org.springframework.security.authentication.DisabledException;
-import com.Mr.fix.it.Exception.ExceptionResponse.ExceptionResponse;
+import com.eco.track.eco_tracking_system.exception.ExceptionResponse.ExceptionResponse;
 
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)

@@ -4,7 +4,7 @@ import lombok.*;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "EnvironmentalData")
+@Table(name = "community_reports")
 @Data
 @Builder
 @NoArgsConstructor
@@ -20,13 +20,13 @@ public class CommunityReport
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "interest_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "topic_id", nullable = false)
     private Topic topic;
 
     @Column(name = "description", columnDefinition = "TEXT", nullable = false)
     private String description;
 
-    @Column(name = "location", length = 255)
+    @Column(name = "location")
     private String location;
 }

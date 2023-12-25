@@ -9,8 +9,8 @@ import org.springframework.http.ResponseEntity;
 
 import org.springframework.core.Ordered;
 
-import com.Mr.fix.it.Exception.ExceptionResponse.ExceptionResponse;
-import com.Mr.fix.it.Exception.ExceptionType.ValidationException;
+import com.eco.track.eco_tracking_system.exception.ExceptionResponse.ExceptionResponse;
+import com.eco.track.eco_tracking_system.exception.ExceptionType.ValidationException;
 
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)

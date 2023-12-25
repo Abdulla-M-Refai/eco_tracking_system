@@ -3,6 +3,8 @@ package com.eco.track.eco_tracking_system.entity;
 import lombok.*;
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "Topic")
 @Data
@@ -18,4 +20,18 @@ public class Topic
 
     @Column(name = "type", nullable = false)
     private String type;
+
+    @OneToMany(
+        mappedBy="topic",
+        cascade = CascadeType.ALL,
+        fetch = FetchType.LAZY
+    )
+    private List<UserProfile> userProfiles;
+
+    @OneToMany(
+        mappedBy="topic",
+        cascade = CascadeType.ALL,
+        fetch = FetchType.LAZY
+    )
+    private List<CommunityReport> communityReports;
 }

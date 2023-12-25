@@ -9,4 +9,6 @@ import com.eco.track.eco_tracking_system.entity.User;
 public interface UserRepository extends JpaRepository<User, Long>
 {
     Optional<User> findByEmail(String email);
+
+    Optional<User> findByUsername(String username);
 }
