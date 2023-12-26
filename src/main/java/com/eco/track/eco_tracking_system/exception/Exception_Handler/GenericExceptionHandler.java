@@ -14,7 +14,6 @@ public class GenericExceptionHandler
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleException(Exception exception)
     {
-        exception.printStackTrace();
         ExceptionResponse exceptionResponse = new ExceptionResponse(
             HttpStatus.BAD_REQUEST.value(),
             exception.getMessage(),

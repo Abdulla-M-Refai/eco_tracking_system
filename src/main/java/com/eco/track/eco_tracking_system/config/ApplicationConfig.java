@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.modelmapper.ModelMapper;
 
 import com.eco.track.eco_tracking_system.repository.UserRepository;
+
 import com.eco.track.eco_tracking_system.exception.ExceptionType.NotFoundException;
 
 @Configuration
