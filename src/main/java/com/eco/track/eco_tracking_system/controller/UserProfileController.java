@@ -94,4 +94,36 @@ public class UserProfileController
     {
         return ResponseEntity.ok(userProfileService.deleteProfile(id));
     }
+
+    @PostMapping("/profile/follow/{id}")
+    public ResponseEntity<GenericResponse> followProfile(
+        @PathVariable
+        long id,
+        @RequestHeader("Authorization")
+        String token
+    ) throws NotFoundException
+    {
+        return ResponseEntity.ok(
+            userProfileService.followProfile(
+                id,
+                token.substring(7)
+            )
+        );
+    }
+
+    @PostMapping("/profile/unfollow/{id}")
+    public ResponseEntity<GenericResponse> unfollowProfile(
+        @PathVariable
+        long id,
+        @RequestHeader("Authorization")
+        String token
+    ) throws NotFoundException
+    {
+        return ResponseEntity.ok(
+            userProfileService.unfollowProfile(
+                id,
+                token.substring(7)
+            )
+        );
+    }
 }

@@ -9,12 +9,15 @@ import org.springframework.validation.BindingResult;
 import com.eco.track.eco_tracking_system.config.security.JwtService;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.eco.track.eco_tracking_system.entity.UserProfile;
+import com.eco.track.eco_tracking_system.entity.ProfileFollowers;
 
 import com.eco.track.eco_tracking_system.repository.UserRepository;
 import com.eco.track.eco_tracking_system.repository.TopicRepository;
 import com.eco.track.eco_tracking_system.repository.UserProfileRepository;
+import com.eco.track.eco_tracking_system.repository.ProfileFollowersRepository;
 
 import com.eco.track.eco_tracking_system.dto.UserProfileDTO;
 
@@ -35,6 +38,8 @@ public class UserProfileService
     private final UserRepository userRepository;
 
     private final UserProfileRepository userProfileRepository;
+
+    private final ProfileFollowersRepository profileFollowersRepository;
 
     private final TopicRepository topicRepository;
 
@@ -165,6 +170,71 @@ public class UserProfileService
             .builder()
             .state("success")
             .message("profile deleted successfully")
+            .build();
+    }
+
+    public GenericResponse followProfile(
+        long id,
+        String token
+    ) throws NotFoundException
+    {
+        String username = jwtService.extractUsername(token);
+
+        var user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new NotFoundException("user not found"));
+
+        var profile = userProfileRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException("profile not found"));
+
+        var profileFollower = profileFollowersRepository.findByUserIDAndProfileID(
+                user.getUserID(),
+                profile.getProfileID()
+        )
+        .or(
+            () -> Optional.of(
+                ProfileFollowers
+                    .builder()
+                    .user(user)
+                    .userProfile(profile)
+                    .build()
+            )
+        )
+        .get();
+
+        profileFollowersRepository.save(profileFollower);
+
+        return GenericResponse
+            .builder()
+            .state("success")
+            .message("profile followed successfully")
+            .build();
+    }
+
+    @Transactional
+    public GenericResponse unfollowProfile(
+        long id,
+        String token
+    ) throws NotFoundException
+    {
+        String username = jwtService.extractUsername(token);
+
+        var user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("user not found"));
+
+        var profile = userProfileRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("profile not found"));
+
+        var profileFollower = profileFollowersRepository.findByUserIDAndProfileID(
+                user.getUserID(),
+                profile.getProfileID()
+        ).orElseThrow(() -> new NotFoundException("no follow to remove"));
+
+        profileFollowersRepository.delete(profileFollower);
+
+        return GenericResponse
+            .builder()
+            .state("success")
+            .message("profile unfollowed successfully")
             .build();
     }
 }

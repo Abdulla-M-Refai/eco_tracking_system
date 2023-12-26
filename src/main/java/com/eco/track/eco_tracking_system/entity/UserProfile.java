@@ -35,4 +35,11 @@ public class UserProfile
         cascade = CascadeType.ALL
     )
     private List<EnvironmentalData> environmentalDataList;
+
+    @OneToMany(
+        fetch = FetchType.LAZY,
+        mappedBy = "userProfile",
+        cascade = CascadeType.ALL
+    )
+    private List<ProfileFollowers> follower;
 }

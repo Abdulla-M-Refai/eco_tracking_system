@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import com.eco.track.eco_tracking_system.entity.Enum.UserType;
@@ -59,6 +58,12 @@ public class User implements UserDetails
         mappedBy = "user"
     )
     private List<SustainabilityScore> sustainabilityScores;
+
+    @OneToMany(
+        fetch = FetchType.LAZY,
+        mappedBy = "user"
+    )
+    private List<ProfileFollowers> following;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities()
