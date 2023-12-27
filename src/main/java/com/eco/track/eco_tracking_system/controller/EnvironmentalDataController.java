@@ -14,10 +14,13 @@ import com.eco.track.eco_tracking_system.dto.EnvironmentalDataDTO;
 
 import com.eco.track.eco_tracking_system.response.RecordResponse;
 import com.eco.track.eco_tracking_system.response.GenericResponse;
+
+import com.eco.track.eco_tracking_system.request.RateRequest;
 import com.eco.track.eco_tracking_system.request.EnvironmentalDataRequest;
 
 import com.eco.track.eco_tracking_system.service.EnvironmentalDataService;
 
+import com.eco.track.eco_tracking_system.exception.ExceptionType.UniqueException;
 import com.eco.track.eco_tracking_system.exception.ExceptionType.NotFoundException;
 import com.eco.track.eco_tracking_system.exception.ExceptionType.ValidationException;
 import com.eco.track.eco_tracking_system.exception.ExceptionType.UnauthorizedException;
@@ -69,6 +72,31 @@ public class EnvironmentalDataController
     {
         return ResponseEntity.ok(
             environmentalDataService.updateEnvironmentalData(
+                id,
+                request,
+                result,
+                token.substring(7)
+            )
+        );
+    }
+
+    @PostMapping("/environmental-data-rate/{id}")
+    public ResponseEntity<GenericResponse> rateEnvironmentalData(
+        @PathVariable
+        long id,
+        @Valid
+        @RequestBody
+        RateRequest request,
+        BindingResult result,
+        @RequestHeader("Authorization")
+        String token
+    ) throws
+        ValidationException,
+        NotFoundException,
+        UniqueException
+    {
+        return ResponseEntity.ok(
+            environmentalDataService.rateEnvironmentalData(
                 id,
                 request,
                 result,

@@ -4,6 +4,7 @@ import lombok.*;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.eco.track.eco_tracking_system.entity.Enum.DataSource;
 
@@ -45,4 +46,15 @@ public class EnvironmentalData
 
     @Column(name = "longitude")
     private Double longitude;
+
+    @Column(name = "rate", nullable = false)
+    private Float rate;
+
+    @OneToMany(
+        fetch = FetchType.LAZY,
+        mappedBy = "environmentalData",
+        cascade = CascadeType.REMOVE,
+        orphanRemoval = true
+    )
+    private List<EnvironmentalDataRate> environmentalDataRates;
 }

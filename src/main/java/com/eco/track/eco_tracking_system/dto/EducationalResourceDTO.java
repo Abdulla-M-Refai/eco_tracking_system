@@ -6,13 +6,11 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserProfileDTO
+public class EducationalResourceDTO
 {
     private long id;
 
-    private long topicID;
+    private String title;
 
-    private String fullName;
-
-    private float rate;
+    private String url;
 }

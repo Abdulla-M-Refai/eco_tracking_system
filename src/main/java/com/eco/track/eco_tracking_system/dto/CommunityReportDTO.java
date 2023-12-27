@@ -13,4 +13,6 @@ public class CommunityReportDTO
     private long topicID;
 
     private String report;
+
+    private float rate;
 }
