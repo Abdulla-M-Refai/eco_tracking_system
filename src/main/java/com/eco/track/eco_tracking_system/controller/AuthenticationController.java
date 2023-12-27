@@ -41,8 +41,6 @@ public class AuthenticationController
                 result
             )
         );
-
-        return ResponseEntity.ok(authenticationService.registerUser(request,result));
     }
 
     @PostMapping("/authenticate")
@@ -67,10 +65,9 @@ public class AuthenticationController
     public ResponseEntity<TokenResponse> refreshToken(
         @RequestHeader("Authorization")
         String refreshToken
-    ) throws 
-        NotFoundException
-        UserNotFoundException
+    ) throws NotFoundException
     {
-        return ResponseEntity.ok(authenticationService.authenticate(request,result));
+        refreshToken = refreshToken.substring(7);
+        return ResponseEntity.ok(authenticationService.refreshToken(refreshToken));
     }
 }

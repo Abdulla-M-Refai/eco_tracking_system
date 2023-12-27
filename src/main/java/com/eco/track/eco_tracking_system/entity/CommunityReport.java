@@ -24,9 +24,6 @@ public class CommunityReport
     @JoinColumn(name = "topic_id", nullable = false)
     private Topic topic;
 
-    @Column(name = "description", columnDefinition = "TEXT", nullable = false)
-    private String description;
-
-    @Column(name = "location")
-    private String location;
+    @Column(name = "report", nullable = false)
+    private String report;
 }

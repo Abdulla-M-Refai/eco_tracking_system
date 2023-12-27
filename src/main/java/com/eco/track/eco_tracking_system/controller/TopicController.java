@@ -8,9 +8,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
+import java.util.List;
+
+import com.eco.track.eco_tracking_system.dto.TopicDTO;
+
 import com.eco.track.eco_tracking_system.request.TopicRequest;
-import com.eco.track.eco_tracking_system.response.TopicResponse;
-import com.eco.track.eco_tracking_system.response.TopicsResponse;
+import com.eco.track.eco_tracking_system.response.RecordResponse;
 import com.eco.track.eco_tracking_system.response.GenericResponse;
 
 import com.eco.track.eco_tracking_system.service.TopicService;
@@ -64,13 +67,13 @@ public class TopicController
     }
 
     @GetMapping("/topics")
-    public ResponseEntity<TopicsResponse> getTopics()
+    public ResponseEntity<RecordResponse<List<TopicDTO>>> getTopics()
     {
         return ResponseEntity.ok(topicService.getTopics());
     }
 
     @GetMapping("/topic/{id}")
-    public ResponseEntity<TopicResponse> getTopic(
+    public ResponseEntity<RecordResponse<TopicDTO>> getTopic(
         @PathVariable
         long id
     ) throws NotFoundException

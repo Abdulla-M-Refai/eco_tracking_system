@@ -9,10 +9,10 @@ import jakarta.validation.constraints.*;
 @NoArgsConstructor
 public class AuthenticationRequest
 {
-    @NotBlank(message = "messing username")
+    @NotBlank(message = "missing username")
     @Size(max = 50, message = "username exceeds maximum length of 50 character")
     private String username;
 
-    @NotBlank(message = "messing password")
+    @NotBlank(message = "missing password")
     private String password;
 }

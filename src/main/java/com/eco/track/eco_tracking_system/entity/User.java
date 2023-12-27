@@ -49,7 +49,8 @@ public class User implements UserDetails
 
     @OneToMany(
         fetch = FetchType.LAZY,
-        mappedBy = "user"
+        mappedBy = "user",
+        cascade = CascadeType.ALL
     )
     private List<CommunityReport> communityReports;
 
