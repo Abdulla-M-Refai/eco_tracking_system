@@ -8,15 +8,19 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
+import java.util.List;
+
+import com.eco.track.eco_tracking_system.dto.UserProfileDTO;
+
+import com.eco.track.eco_tracking_system.response.RecordResponse;
 import com.eco.track.eco_tracking_system.response.GenericResponse;
 import com.eco.track.eco_tracking_system.request.UserProfileRequest;
-import com.eco.track.eco_tracking_system.response.UserProfileResponse;
-import com.eco.track.eco_tracking_system.response.UserProfilesResponse;
 
 import com.eco.track.eco_tracking_system.service.UserProfileService;
 
 import com.eco.track.eco_tracking_system.exception.ExceptionType.NotFoundException;
 import com.eco.track.eco_tracking_system.exception.ExceptionType.ValidationException;
+import com.eco.track.eco_tracking_system.exception.ExceptionType.UnauthorizedException;
 
 @RestController
 @RequestMapping("/api/")
@@ -54,7 +58,9 @@ public class UserProfileController
         @Valid
         @RequestBody
         UserProfileRequest request,
-        BindingResult result
+        BindingResult result,
+        @RequestHeader("Authorization")
+        String token
     ) throws
         ValidationException,
         NotFoundException
@@ -63,13 +69,20 @@ public class UserProfileController
             userProfileService.updateProfile(
                 id,
                 request,
-                result
+                result,
+                token.substring(7)
             )
         );
     }
 
+    @GetMapping("/all-profiles")
+    public ResponseEntity<RecordResponse<List<UserProfileDTO>>> getAllProfiles()
+    {
+        return ResponseEntity.ok(userProfileService.getAllProfiles());
+    }
+
     @GetMapping("/profiles")
-    public ResponseEntity<UserProfilesResponse> getProfiles(
+    public ResponseEntity<RecordResponse<List<UserProfileDTO>>> getProfiles(
         @RequestHeader("Authorization")
         String token
     ) throws NotFoundException
@@ -78,7 +91,7 @@ public class UserProfileController
     }
 
     @GetMapping("/profile/{id}")
-    public ResponseEntity<UserProfileResponse> getProfile(
+    public ResponseEntity<RecordResponse<UserProfileDTO>> getProfile(
         @PathVariable
         long id
     ) throws NotFoundException
@@ -89,10 +102,19 @@ public class UserProfileController
     @DeleteMapping("/profile/{id}")
     public ResponseEntity<GenericResponse> deleteProfile(
         @PathVariable
-        long id
-    ) throws NotFoundException
+        long id,
+        @RequestHeader("Authorization")
+        String token
+    ) throws
+        NotFoundException,
+        UnauthorizedException
     {
-        return ResponseEntity.ok(userProfileService.deleteProfile(id));
+        return ResponseEntity.ok(
+            userProfileService.deleteProfile(
+                id,
+                token.substring(7)
+            )
+        );
     }
 
     @PostMapping("/profile/follow/{id}")

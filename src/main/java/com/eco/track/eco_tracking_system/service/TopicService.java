@@ -6,14 +6,15 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.validation.BindingResult;
 
+import java.util.List;
+
 import com.eco.track.eco_tracking_system.entity.Topic;
 import com.eco.track.eco_tracking_system.dto.TopicDTO;
 
 import com.eco.track.eco_tracking_system.repository.TopicRepository;
 
 import com.eco.track.eco_tracking_system.request.TopicRequest;
-import com.eco.track.eco_tracking_system.response.TopicResponse;
-import com.eco.track.eco_tracking_system.response.TopicsResponse;
+import com.eco.track.eco_tracking_system.response.RecordResponse;
 import com.eco.track.eco_tracking_system.response.GenericResponse;
 
 import com.eco.track.eco_tracking_system.util.Helper;
@@ -27,7 +28,7 @@ public class TopicService
 {
     private final TopicRepository topicRepository;
 
-    public TopicResponse getTopic(
+    public RecordResponse<TopicDTO> getTopic(
         long id
     ) throws NotFoundException
     {
@@ -40,13 +41,14 @@ public class TopicService
             .type(topic.getType())
             .build();
 
-        return TopicResponse
-            .builder()
-            .topic(topicDTO)
+
+        return RecordResponse
+            .<TopicDTO>builder()
+            .data(topicDTO)
             .build();
     }
 
-    public TopicsResponse getTopics()
+    public RecordResponse<List<TopicDTO>> getTopics()
     {
         var topics = topicRepository.findAll();
 
@@ -61,9 +63,9 @@ public class TopicService
             )
             .toList();
 
-        return TopicsResponse
-            .builder()
-            .topics(topicsDTO)
+        return RecordResponse
+            .<List<TopicDTO>>builder()
+            .data(topicsDTO)
             .build();
     }
 
