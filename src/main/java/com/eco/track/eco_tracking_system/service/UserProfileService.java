@@ -69,6 +69,7 @@ public class UserProfileService
             .user(user)
             .topic(topic)
             .fullName(request.getFullName())
+            .profileRate(0f)
             .build();
 
         userProfileRepository.save(userProfile);
@@ -135,6 +136,7 @@ public class UserProfileService
                     .id(profile.getProfileID())
                     .topicID(profile.getTopic().getTopicID())
                     .fullName(profile.getFullName())
+                    .rate(profile.getProfileRate())
                     .build()
             )
             .toList();
@@ -160,6 +162,7 @@ public class UserProfileService
             .stream()
             .map(profile -> UserProfileDTO
                 .builder()
+                .rate(profile.getProfileRate())
                 .id(profile.getProfileID())
                 .topicID(profile.getTopic().getTopicID())
                 .fullName(profile.getFullName())
@@ -185,6 +188,7 @@ public class UserProfileService
             .id(profile.getProfileID())
             .topicID(profile.getTopic().getTopicID())
             .fullName(profile.getFullName())
+            .rate(profile.getProfileRate())
             .build();
 
         return RecordResponse

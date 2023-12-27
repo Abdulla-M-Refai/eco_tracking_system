@@ -27,4 +27,6 @@ public class EnvironmentalDataDTO
     private double latitude;
 
     private double longitude;
+
+    private float rate;
 }

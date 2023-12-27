@@ -12,19 +12,24 @@ import java.util.List;
 import java.util.Objects;
 
 import com.eco.track.eco_tracking_system.entity.EnvironmentalData;
+import com.eco.track.eco_tracking_system.entity.EnvironmentalDataRate;
 
 import com.eco.track.eco_tracking_system.repository.UserRepository;
 import com.eco.track.eco_tracking_system.repository.UserProfileRepository;
 import com.eco.track.eco_tracking_system.repository.EnvironmentalDataRepository;
+import com.eco.track.eco_tracking_system.repository.EnvironmentalDataRateRepository;
 
 import com.eco.track.eco_tracking_system.dto.EnvironmentalDataDTO;
 
 import com.eco.track.eco_tracking_system.response.RecordResponse;
 import com.eco.track.eco_tracking_system.response.GenericResponse;
+
+import com.eco.track.eco_tracking_system.request.RateRequest;
 import com.eco.track.eco_tracking_system.request.EnvironmentalDataRequest;
 
 import com.eco.track.eco_tracking_system.util.Helper;
 
+import com.eco.track.eco_tracking_system.exception.ExceptionType.UniqueException;
 import com.eco.track.eco_tracking_system.exception.ExceptionType.NotFoundException;
 import com.eco.track.eco_tracking_system.exception.ExceptionType.ValidationException;
 import com.eco.track.eco_tracking_system.exception.ExceptionType.UnauthorizedException;
@@ -38,6 +43,8 @@ public class EnvironmentalDataService
     private final UserProfileRepository userProfileRepository;
 
     private final EnvironmentalDataRepository environmentalDataRepository;
+
+    private final EnvironmentalDataRateRepository environmentalDataRateRepository;
 
     private final JwtService jwtService;
 
@@ -78,6 +85,7 @@ public class EnvironmentalDataService
             .latitude(request.getParsedLatitude())
             .longitude(request.getParsedLongitude())
             .userProfile(profile)
+            .rate(0f)
             .build();
 
         environmentalDataRepository.save(environmentalData);
@@ -154,6 +162,7 @@ public class EnvironmentalDataService
                     .unit(environmentalData.getUnit())
                     .value(environmentalData.getValue())
                     .time(environmentalData.getTime())
+                    .rate(environmentalData.getRate())
                     .build()
             )
             .toList();
@@ -181,6 +190,7 @@ public class EnvironmentalDataService
             .unit(environmentalData.getUnit())
             .value(environmentalData.getValue())
             .time(environmentalData.getTime())
+            .rate(environmentalData.getRate())
             .build();
 
         return RecordResponse
@@ -214,6 +224,74 @@ public class EnvironmentalDataService
             .builder()
             .state("success")
             .message("Environmental data deleted successfully")
+            .build();
+    }
+
+    @Transactional
+    public GenericResponse rateEnvironmentalData(
+        long id,
+        RateRequest request,
+        BindingResult result,
+        String token
+    ) throws
+        ValidationException,
+        NotFoundException,
+        UniqueException
+    {
+        Helper.fieldsValidate(result);
+
+        String username = jwtService.extractUsername(token);
+
+        var user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new NotFoundException("user not found"));
+
+        var environmentalData = environmentalDataRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException("environmental data not found"));
+
+        int size = environmentalData.getEnvironmentalDataRates()
+            .stream()
+            .filter(data -> Objects.equals(data.getUser().getUserID(), user.getUserID()))
+            .toList()
+            .size();
+
+        if(size != 0)
+            throw new UniqueException("user already rated this data");
+
+        var rate = EnvironmentalDataRate
+            .builder()
+            .user(user)
+            .environmentalData(environmentalData)
+            .rate(request.getParsedRate())
+            .build();
+
+        environmentalDataRateRepository.save(rate);
+
+        double dataRateSum = environmentalData.getEnvironmentalDataRates()
+            .stream()
+            .mapToDouble(EnvironmentalDataRate::getRate)
+            .sum();
+
+        float newDataRate = (float) dataRateSum / environmentalData.getEnvironmentalDataRates().size();
+
+        environmentalData.setRate(newDataRate);
+        environmentalDataRepository.save(environmentalData);
+
+        var profile = environmentalData.getUserProfile();
+
+        double profileRateSum = profile.getEnvironmentalDataList()
+            .stream()
+            .mapToDouble(EnvironmentalData::getRate)
+            .sum();
+
+        float newProfileRate = (float) profileRateSum / environmentalData.getUserProfile().getEnvironmentalDataList().size();
+        profile.setProfileRate(newProfileRate);
+
+        userProfileRepository.save(profile);
+
+        return GenericResponse
+            .builder()
+            .state("success")
+            .message("data rated successfully")
             .build();
     }
 }

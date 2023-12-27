@@ -59,6 +59,7 @@ public class AuthenticationService
             .username(request.getUsername())
             .email(request.getEmail())
             .password(passwordEncoder.encode(request.getPassword()))
+            .communityReportRate(0f)
             .type(UserType.USER)
             .isEnabled(true)
             .build();

@@ -16,10 +16,13 @@ import com.eco.track.eco_tracking_system.dto.CommunityReportDTO;
 
 import com.eco.track.eco_tracking_system.response.RecordResponse;
 import com.eco.track.eco_tracking_system.response.GenericResponse;
+
+import com.eco.track.eco_tracking_system.request.RateRequest;
 import com.eco.track.eco_tracking_system.request.CommunityReportRequest;
 
 import com.eco.track.eco_tracking_system.service.CommunityReportService;
 
+import com.eco.track.eco_tracking_system.exception.ExceptionType.UniqueException;
 import com.eco.track.eco_tracking_system.exception.ExceptionType.NotFoundException;
 import com.eco.track.eco_tracking_system.exception.ExceptionType.ValidationException;
 import com.eco.track.eco_tracking_system.exception.ExceptionType.UnauthorizedException;
@@ -72,6 +75,31 @@ public class CommunityReportsController
     {
         return ResponseEntity.ok(
             communityReportService.updateCommunityReport(
+                id,
+                request,
+                result,
+                token.substring(7)
+            )
+        );
+    }
+
+    @PostMapping("/community-report-rate/{id}")
+    public ResponseEntity<GenericResponse> rateCommunityReport(
+        @PathVariable
+        long id,
+        @Valid
+        @RequestBody
+        RateRequest request,
+        BindingResult result,
+        @RequestHeader("Authorization")
+        String token
+    ) throws
+        ValidationException,
+        NotFoundException,
+        UniqueException
+    {
+        return ResponseEntity.ok(
+            communityReportService.rateCommunityReport(
                 id,
                 request,
                 result,

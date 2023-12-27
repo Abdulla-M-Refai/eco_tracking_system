@@ -16,9 +16,13 @@ public class EducationalResource
     @Column(name = "resource_id")
     private Long resourceId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
-    private String content;
+    @Column(name = "url", nullable = false, columnDefinition = "TEXT")
+    private String url;
 }

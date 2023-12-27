@@ -19,19 +19,24 @@ import java.nio.file.Files;
 import java.io.IOException;
 
 import com.eco.track.eco_tracking_system.entity.CommunityReport;
+import com.eco.track.eco_tracking_system.entity.CommunityReportRate;
 
 import com.eco.track.eco_tracking_system.repository.UserRepository;
 import com.eco.track.eco_tracking_system.repository.TopicRepository;
 import com.eco.track.eco_tracking_system.repository.CommunityReportRepository;
+import com.eco.track.eco_tracking_system.repository.CommunityReportRateRepository;
 
 import com.eco.track.eco_tracking_system.dto.CommunityReportDTO;
 
 import com.eco.track.eco_tracking_system.response.RecordResponse;
 import com.eco.track.eco_tracking_system.response.GenericResponse;
+
+import com.eco.track.eco_tracking_system.request.RateRequest;
 import com.eco.track.eco_tracking_system.request.CommunityReportRequest;
 
 import com.eco.track.eco_tracking_system.util.Helper;
 
+import com.eco.track.eco_tracking_system.exception.ExceptionType.UniqueException;
 import com.eco.track.eco_tracking_system.exception.ExceptionType.NotFoundException;
 import com.eco.track.eco_tracking_system.exception.ExceptionType.ValidationException;
 import com.eco.track.eco_tracking_system.exception.ExceptionType.UnauthorizedException;
@@ -45,6 +50,8 @@ public class CommunityReportService
     private final TopicRepository topicRepository;
 
     private final CommunityReportRepository communityReportRepository;
+
+    private final CommunityReportRateRepository communityReportRateRepository;
 
     private final JwtService jwtService;
 
@@ -88,6 +95,7 @@ public class CommunityReportService
             .user(user)
             .topic(topic)
             .report(reportURI)
+            .rate(0f)
             .build();
 
         communityReportRepository.save(communityReport);
@@ -162,6 +170,7 @@ public class CommunityReportService
                     .reportID(report.getReportId())
                     .topicID(report.getTopic().getTopicID())
                     .report(report.getReport())
+                    .rate(report.getRate())
                     .build()
             )
             .toList();
@@ -189,6 +198,7 @@ public class CommunityReportService
                     .reportID(report.getReportId())
                     .topicID(report.getTopic().getTopicID())
                     .report(report.getReport())
+                    .rate(report.getRate())
                     .build()
             )
             .toList();
@@ -211,6 +221,7 @@ public class CommunityReportService
             .reportID(report.getReportId())
             .topicID(report.getTopic().getTopicID())
             .report(report.getReport())
+            .rate(report.getRate())
             .build();
 
         return RecordResponse
@@ -244,6 +255,72 @@ public class CommunityReportService
             .builder()
             .state("success")
             .message("report deleted successfully")
+            .build();
+    }
+
+    @Transactional
+    public GenericResponse rateCommunityReport(
+        long id,
+        RateRequest request,
+        BindingResult result,
+        String token
+    ) throws
+        ValidationException,
+        NotFoundException,
+        UniqueException
+    {
+        Helper.fieldsValidate(result);
+
+        String username = jwtService.extractUsername(token);
+
+        var user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new NotFoundException("user not found"));
+
+        var report = communityReportRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException("report not found"));
+
+        int size = report.getCommunityReportRates()
+            .stream()
+            .filter(data -> Objects.equals(data.getUser().getUserID(), user.getUserID()))
+            .toList()
+            .size();
+
+        if(size != 0)
+            throw new UniqueException("user already rated this data");
+
+        var rate = CommunityReportRate
+            .builder()
+            .user(user)
+            .communityReport(report)
+            .rate(request.getParsedRate())
+            .build();
+
+        communityReportRateRepository.save(rate);
+
+        double reportRateSum = report.getCommunityReportRates()
+            .stream()
+            .mapToDouble(CommunityReportRate::getRate)
+            .sum();
+
+        float newReportRate = (float) reportRateSum / report.getCommunityReportRates().size();
+
+        report.setRate(newReportRate);
+        communityReportRepository.save(report);
+
+        double userReportsRateSum = user.getCommunityReports()
+            .stream()
+            .mapToDouble(CommunityReport::getRate)
+            .sum();
+
+        float newUserReportsRate = (float) userReportsRateSum / user.getCommunityReports().size();
+        user.setCommunityReportRate(newUserReportsRate);
+
+        userRepository.save(user);
+
+        return GenericResponse
+            .builder()
+            .state("success")
+            .message("report rated successfully")
             .build();
     }
 }
