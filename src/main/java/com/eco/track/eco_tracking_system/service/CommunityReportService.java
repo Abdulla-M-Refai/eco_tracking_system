@@ -296,6 +296,7 @@ public class CommunityReportService
             .build();
 
         communityReportRateRepository.save(rate);
+        report.getCommunityReportRates().add(rate);
 
         double reportRateSum = report.getCommunityReportRates()
             .stream()
@@ -307,15 +308,17 @@ public class CommunityReportService
         report.setRate(newReportRate);
         communityReportRepository.save(report);
 
-        double userReportsRateSum = user.getCommunityReports()
+        var ratedUser = report.getUser();
+
+        double userReportsRateSum = ratedUser.getCommunityReports()
             .stream()
             .mapToDouble(CommunityReport::getRate)
             .sum();
 
-        float newUserReportsRate = (float) userReportsRateSum / user.getCommunityReports().size();
-        user.setCommunityReportRate(newUserReportsRate);
+        float newUserReportsRate = (float) userReportsRateSum / ratedUser.getCommunityReports().size();
+        ratedUser.setCommunityReportRate(newUserReportsRate);
 
-        userRepository.save(user);
+        userRepository.save(ratedUser);
 
         return GenericResponse
             .builder()

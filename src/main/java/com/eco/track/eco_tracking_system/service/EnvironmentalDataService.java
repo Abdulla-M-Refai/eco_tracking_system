@@ -29,6 +29,7 @@ import com.eco.track.eco_tracking_system.request.EnvironmentalDataRequest;
 
 import com.eco.track.eco_tracking_system.util.Helper;
 
+import jakarta.mail.MessagingException;
 import com.eco.track.eco_tracking_system.exception.ExceptionType.UniqueException;
 import com.eco.track.eco_tracking_system.exception.ExceptionType.NotFoundException;
 import com.eco.track.eco_tracking_system.exception.ExceptionType.ValidationException;
@@ -47,6 +48,8 @@ public class EnvironmentalDataService
     private final EnvironmentalDataRateRepository environmentalDataRateRepository;
 
     private final JwtService jwtService;
+
+    private final EmailService emailService;
 
     public GenericResponse createEnvironmentalData(
         EnvironmentalDataRequest request,
@@ -89,6 +92,39 @@ public class EnvironmentalDataService
             .build();
 
         environmentalDataRepository.save(environmentalData);
+
+        new Thread(() ->
+            profile.getFollower()
+                .forEach(follower ->
+                {
+                    if(follower.getThreshold() <= environmentalData.getValue())
+                    {
+                        try
+                        {
+                            String subject = "Significant Change in " + environmentalData.getDataType();
+
+                            String body =
+                                "data source: " + environmentalData.getDataSource() + "\n" +
+                                "data type: " + environmentalData.getDataType() + "\n" +
+                                "value: " + environmentalData.getValue() + "\n" +
+                                "unit: " + environmentalData.getUnit() + "\n" +
+                                "time: " + environmentalData.getTime() + "\n" +
+                                "latitude: " + environmentalData.getLatitude() + "\n" +
+                                "longitude: " + environmentalData.getLongitude() + "\n" +
+                                "profile: " + profile.getFullName();
+
+                            emailService.notifyUser(
+                                follower.getUser().getEmail(),
+                                subject,
+                                body
+                            );
+                        }
+                        catch (MessagingException e)
+                        {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                })).start();
 
         return GenericResponse
             .builder()
@@ -265,6 +301,7 @@ public class EnvironmentalDataService
             .build();
 
         environmentalDataRateRepository.save(rate);
+        environmentalData.getEnvironmentalDataRates().add(rate);
 
         double dataRateSum = environmentalData.getEnvironmentalDataRates()
             .stream()

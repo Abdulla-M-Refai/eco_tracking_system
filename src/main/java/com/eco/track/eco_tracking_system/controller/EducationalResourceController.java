@@ -33,7 +33,7 @@ public class EducationalResourceController
     @PostMapping("/educational-resource")
     public ResponseEntity<GenericResponse> createEducationalResource(
         @Valid
-        @ModelAttribute
+        @RequestBody
         EducationalResourceRequest request,
         BindingResult result,
         @RequestHeader("Authorization")

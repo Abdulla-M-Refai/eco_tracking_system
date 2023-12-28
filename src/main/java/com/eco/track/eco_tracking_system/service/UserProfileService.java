@@ -253,6 +253,7 @@ public class UserProfileService
                     .builder()
                     .user(user)
                     .userProfile(profile)
+                    .threshold(Double.MAX_VALUE)
                     .build()
             )
         )
