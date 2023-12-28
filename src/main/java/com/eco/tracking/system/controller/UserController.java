@@ -107,7 +107,7 @@ public class UserController
     ) throws NotFoundException
     {
         return ResponseEntity.ok(
-            userService.userDisable(token)
+            userService.userDisable(token.substring(7))
         );
     }
 }
