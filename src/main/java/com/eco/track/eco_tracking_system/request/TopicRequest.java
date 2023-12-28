@@ -12,7 +12,7 @@ import com.eco.track.eco_tracking_system.validator.Annotation.UniqueTopicType;
 @NoArgsConstructor
 public class TopicRequest
 {
-    @NotBlank(message = "messing type")
+    @NotBlank(message = "missing type")
     @Size(max = 50, message = "type exceeds maximum length of 50 character")
     @UniqueTopicType
     private String type;

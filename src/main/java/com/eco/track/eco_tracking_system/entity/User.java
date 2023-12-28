@@ -34,6 +34,9 @@ public class User implements UserDetails
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Column(name = "community_report_rate", nullable = false)
+    private Float communityReportRate;
+
     @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
     private UserType type;
@@ -49,21 +52,40 @@ public class User implements UserDetails
 
     @OneToMany(
         fetch = FetchType.LAZY,
-        mappedBy = "user"
+        mappedBy = "user",
+        cascade = CascadeType.ALL
     )
     private List<CommunityReport> communityReports;
 
     @OneToMany(
         fetch = FetchType.LAZY,
-        mappedBy = "user"
+        mappedBy = "user",
+        cascade = CascadeType.ALL
     )
-    private List<SustainabilityScore> sustainabilityScores;
+    private List<ProfileFollowers> following;
 
     @OneToMany(
         fetch = FetchType.LAZY,
-        mappedBy = "user"
+        mappedBy = "user",
+        cascade = CascadeType.ALL
     )
-    private List<ProfileFollowers> following;
+    private List<EducationalResource> educationalResources;
+
+    @OneToMany(
+        fetch = FetchType.LAZY,
+        mappedBy = "user",
+        cascade = CascadeType.REMOVE,
+        orphanRemoval = true
+    )
+    private List<CommunityReportRate> communityReportRates;
+
+    @OneToMany(
+        fetch = FetchType.LAZY,
+        mappedBy = "user",
+        cascade = CascadeType.REMOVE,
+        orphanRemoval = true
+    )
+    private List<EnvironmentalDataRate> environmentalDataRates;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities()

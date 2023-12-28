@@ -23,4 +23,7 @@ public class ProfileFollowers
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id", nullable = false)
     private UserProfile userProfile;
+
+    @Column(name = "threshold", nullable = false)
+    private Double threshold;
 }

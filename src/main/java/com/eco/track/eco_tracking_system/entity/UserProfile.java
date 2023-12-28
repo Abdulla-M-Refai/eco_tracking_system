@@ -25,6 +25,9 @@ public class UserProfile
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
+    @Column(name = "profile_rate", nullable = false)
+    private Float profileRate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "interest_id", nullable = false)
     private Topic topic;

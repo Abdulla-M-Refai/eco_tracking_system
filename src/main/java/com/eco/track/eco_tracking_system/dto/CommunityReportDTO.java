@@ -6,13 +6,13 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserProfileDTO
+public class CommunityReportDTO
 {
-    private long id;
+    private long reportID;
 
     private long topicID;
 
-    private String fullName;
+    private String report;
 
     private float rate;
 }

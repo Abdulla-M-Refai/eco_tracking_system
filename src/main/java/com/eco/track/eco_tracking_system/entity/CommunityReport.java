@@ -3,6 +3,8 @@ package com.eco.track.eco_tracking_system.entity;
 import lombok.*;
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "community_reports")
 @Data
@@ -24,9 +26,17 @@ public class CommunityReport
     @JoinColumn(name = "topic_id", nullable = false)
     private Topic topic;
 
-    @Column(name = "description", columnDefinition = "TEXT", nullable = false)
-    private String description;
+    @Column(name = "report", nullable = false, columnDefinition = "TEXT")
+    private String report;
 
-    @Column(name = "location")
-    private String location;
+    @Column(name = "rate", nullable = false)
+    private Float rate;
+
+    @OneToMany(
+        fetch = FetchType.LAZY,
+        mappedBy = "communityReport",
+        cascade = CascadeType.REMOVE,
+        orphanRemoval = true
+    )
+    private List<CommunityReportRate> communityReportRates;
 }
