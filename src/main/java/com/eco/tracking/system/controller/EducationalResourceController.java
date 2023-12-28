@@ -77,7 +77,7 @@ public class EducationalResourceController
     }
 
     @GetMapping("/all-educational-resources")
-    public ResponseEntity<RecordResponse<List<EducationalResourceDTO>>> getAllEducationalResource() throws NotFoundException
+    public ResponseEntity<RecordResponse<List<EducationalResourceDTO>>> getAllEducationalResource()
     {
         return ResponseEntity.ok(educationalResourceService.getAllEducationalResource());
     }
